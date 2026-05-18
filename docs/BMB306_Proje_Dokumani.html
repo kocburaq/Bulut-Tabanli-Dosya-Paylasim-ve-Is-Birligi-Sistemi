@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BMB306 – Bulut Tabanlı Dosya Paylaşım Sistemi – Proje Dökümanı</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm 20mm 18mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5pt; color: #1e293b; background: #fff; line-height: 1.55; }
+
+  /* ---------- yardımcı ---------- */
+  .page-break { page-break-after: always; break-after: page; }
+  .no-break   { page-break-inside: avoid; break-inside: avoid; }
+
+  /* ---------- kapak ---------- */
+  .cover {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 250mm; text-align: center; padding: 30mm 20mm;
+  }
+  .cover .logo  { font-size: 64pt; margin-bottom: 12mm; }
+  .cover h1     { font-size: 20pt; font-weight: 700; color: #1e40af; margin-bottom: 4mm; line-height: 1.3; }
+  .cover h2     { font-size: 13pt; font-weight: 400; color: #475569; margin-bottom: 10mm; }
+  .cover table  { border-collapse: collapse; width: 130mm; margin: 0 auto; }
+  .cover td     { padding: 3mm 5mm; font-size: 10pt; border-bottom: 1px solid #e2e8f0; }
+  .cover td:first-child { font-weight: 600; color: #1e40af; text-align: right; padding-right: 6mm; width: 55mm; }
+  .cover td:last-child  { text-align: left; }
+  .cover .footer { margin-top: 14mm; font-size: 9pt; color: #94a3b8; }
+
+  /* ---------- bölüm başlıkları ---------- */
+  h2.section {
+    font-size: 14pt; font-weight: 700; color: #1e40af;
+    border-bottom: 2.5px solid #1e40af; padding-bottom: 2mm;
+    margin: 8mm 0 5mm;
+  }
+  h3.sub { font-size: 11pt; font-weight: 600; color: #1e40af; margin: 5mm 0 3mm; }
+  h4.sub2 { font-size: 10.5pt; font-weight: 600; color: #334155; margin: 4mm 0 2mm; }
+
+  /* ---------- içindekiler ---------- */
+  .toc { width: 100%; }
+  .toc tr td { padding: 2mm 2mm; border-bottom: 1px dotted #cbd5e1; font-size: 10pt; }
+  .toc tr td:first-child { color: #1e40af; font-weight: 600; width: 18mm; }
+  .toc tr td:last-child  { text-align: right; color: #94a3b8; width: 14mm; }
+  .toc tr td:nth-child(2) { }
+
+  /* ---------- genel tablo ---------- */
+  table.data { width: 100%; border-collapse: collapse; margin: 3mm 0; font-size: 9.5pt; }
+  table.data th { background: #1e40af; color: #fff; padding: 2.5mm 3mm; text-align: left; font-weight: 600; }
+  table.data td { padding: 2mm 3mm; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  table.data tr:nth-child(even) td { background: #f8fafc; }
+
+  /* ---------- gereksinim tablosu ---------- */
+  .req-id  { font-family: monospace; font-size: 9pt; color: #1e40af; font-weight: 700; white-space: nowrap; }
+  .prio-h  { background:#fee2e2; color:#991b1b; padding:1px 5px; border-radius:4px; font-size:8.5pt; font-weight:700; }
+  .prio-m  { background:#fef9c3; color:#854d0e; padding:1px 5px; border-radius:4px; font-size:8.5pt; font-weight:700; }
+  .prio-l  { background:#dcfce7; color:#166534; padding:1px 5px; border-radius:4px; font-size:8.5pt; font-weight:700; }
+
+  /* ---------- HTTP method badge ---------- */
+  .get    { background:#10b981; color:#fff; padding:1px 6px; border-radius:4px; font-size:8pt; font-weight:700; }
+  .post   { background:#3b82f6; color:#fff; padding:1px 6px; border-radius:4px; font-size:8pt; font-weight:700; }
+  .put    { background:#f59e0b; color:#fff; padding:1px 6px; border-radius:4px; font-size:8pt; font-weight:700; }
+  .delete { background:#ef4444; color:#fff; padding:1px 6px; border-radius:4px; font-size:8pt; font-weight:700; }
+
+  /* ---------- gantt ---------- */
+  .gantt { width:100%; border-collapse:collapse; font-size:8.5pt; }
+  .gantt th { background:#1e40af; color:#fff; padding:2mm 2.5mm; text-align:center; border:1px solid #1e3a8a; }
+  .gantt td { padding:1.8mm 2mm; border:1px solid #e2e8f0; vertical-align:middle; }
+  .gantt td.task-name { font-weight:500; width:52mm; background:#f8fafc; }
+  .gantt .g-done  { background:#1e40af; border-radius:2px; height:6px; margin:auto; }
+  .gantt .g-empty { background:#e2e8f0; border-radius:2px; height:6px; margin:auto; }
+
+  /* ---------- use case SVG kutu ---------- */
+  .diagram-box {
+    border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 4mm;
+    margin: 3mm 0; background: #f8fafc; overflow: hidden;
+  }
+
+  /* ---------- sequence adım ---------- */
+  .seq-step {
+    display: flex; align-items: flex-start; gap: 3mm;
+    margin: 1.5mm 0; padding: 2mm 3mm;
+    border-left: 3px solid #1e40af; background: #f8fafc; border-radius: 0 4px 4px 0;
+    font-size: 9.5pt;
+  }
+  .seq-step .step-no {
+    min-width: 6mm; font-weight: 700; color: #1e40af; font-size: 9pt;
+  }
+  .seq-actors {
+    display: flex; gap: 2mm; margin-bottom: 3mm; flex-wrap: wrap;
+  }
+  .actor-box {
+    background: #1e40af; color: #fff; padding: 2mm 4mm;
+    border-radius: 4px; font-size: 9pt; font-weight: 600;
+  }
+
+  /* ---------- ER tablo ---------- */
+  .er-table { margin-bottom: 5mm; }
+  .er-table-title {
+    background: #1e3a8a; color: #fff; font-weight: 700; font-size: 10pt;
+    padding: 2mm 3mm; border-radius: 4px 4px 0 0;
+  }
+
+  /* ---------- info kutusu ---------- */
+  .info-box {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;
+    padding: 3mm 4mm; margin: 3mm 0; font-size: 9.5pt; color: #1e40af;
+  }
+
+  /* ---------- paragraf / liste ---------- */
+  p { margin: 2mm 0; }
+  ul, ol { margin: 2mm 0 2mm 6mm; }
+  li { margin: 1mm 0; }
+  code { background:#f1f5f9; padding:0 3px; border-radius:3px; font-family:Consolas,monospace; font-size:9pt; }
+
+  /* ---------- role badge ---------- */
+  .role { padding:1px 5px; border-radius:4px; font-size:8.5pt; font-weight:700; }
+  .role-admin   { background:#fee2e2; color:#991b1b; }
+  .role-manager { background:#fef9c3; color:#854d0e; }
+  .role-user    { background:#dcfce7; color:#166534; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ KAPAK ══════════════════════ -->
+<div class="cover">
+  <div class="logo">☁️</div>
+  <h1>Bulut Tabanlı Dosya Paylaşım<br>ve İş Birliği Sistemi</h1>
+  <h2>CloudFile – Proje Dökümanı</h2>
+  <table>
+    <tr><td>Ders</td><td>BMB306 – Yazılım Mühendisliği</td></tr>
+    <tr><td>Konu No</td><td>#18</td></tr>
+    <tr><td>Öğrenci</td><td>Burak Koç</td></tr>
+    <tr><td>Dönem</td><td>2025–2026 Bahar</td></tr>
+    <tr><td>Tarih</td><td>Mayıs 2026</td></tr>
+    <tr><td>GitHub</td><td>github.com/kocburaq/Bulut-Tabanli-Dosya-Paylasim-ve-Is-Birligi-Sistemi</td></tr>
+  </table>
+  <div class="footer">Bilgisayar Mühendisliği Bölümü</div>
+</div>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ İÇİNDEKİLER ══════════════════════ -->
+<h2 class="section">İçindekiler</h2>
+<table class="toc">
+  <tr><td>1</td><td>Proje Tanımı ve Ekip Bilgisi</td><td>3</td></tr>
+  <tr><td>2</td><td>İş Tanımları ve Aktivite Listesi</td><td>3</td></tr>
+  <tr><td>3</td><td>Gantt Diyagramı</td><td>4</td></tr>
+  <tr><td>4</td><td>Gereksinim Analizi</td><td>5</td></tr>
+  <tr><td>5</td><td>Use Case Diyagramları</td><td>6</td></tr>
+  <tr><td>6</td><td>Sistem Sınıf Diyagramı</td><td>8</td></tr>
+  <tr><td>7</td><td>Ardışıklık Diyagramları (Sequence)</td><td>10</td></tr>
+  <tr><td>8</td><td>Veritabanı Tasarımı – ER Diyagramı</td><td>12</td></tr>
+  <tr><td>9</td><td>Teknik Rapor ve API Dokümantasyonu</td><td>14</td></tr>
+  <tr><td>10</td><td>Kullanım Kılavuzu</td><td>16</td></tr>
+</table>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 1 – PROJE TANIMI ══════════════════════ -->
+<h2 class="section">1 – Proje Tanımı ve Ekip Bilgisi</h2>
+
+<h3 class="sub">1.1 Proje Özeti</h3>
+<p>
+  <b>CloudFile</b>, kullanıcıların dosyalarını bulut ortamında depolayıp yönetebileceği, başkaları ile paylaşabileceği ve farklı rol seviyelerinde birlikte çalışabileceği bir web uygulamasıdır.
+  Uygulama; ASP.NET Core Web API (.NET 10) tabanlı RESTful bir backend ile React 18 + Vite tabanlı modern bir frontend'den oluşmaktadır.
+  Veritabanı olarak PostgreSQL, kimlik doğrulama için JWT ve şifre hashleme için BCrypt kullanılmıştır.
+</p>
+
+<h3 class="sub">1.2 Temel Özellikler</h3>
+<ul>
+  <li>JWT tabanlı kullanıcı kayıt / giriş sistemi</li>
+  <li>Üç katmanlı rol sistemi: Admin, Manager, User</li>
+  <li>İç içe (hiyerarşik) klasör yönetimi</li>
+  <li>Dosya yükleme, indirme, soft-delete ile silme</li>
+  <li>Otomatik dosya versiyonlama (aynı isimde dosya tekrar yüklendiğinde yeni versiyon oluşturulur)</li>
+  <li>Token tabanlı paylaşılabilir (anonim erişimli) link oluşturma</li>
+  <li>Kullanıcı başına depolama kotası (varsayılan 1 GB, admin tarafından değiştirilebilir)</li>
+  <li>Admin paneli: kullanıcı yönetimi, kota/rol değiştirme, istatistikler</li>
+  <li>Token tabanlı şifre sıfırlama</li>
+</ul>
+
+<h3 class="sub">1.3 Ekip Bilgisi</h3>
+<table class="data">
+  <thead><tr><th>Ad Soyad</th><th>Öğrenci No</th><th>Görev</th></tr></thead>
+  <tbody>
+    <tr><td>Burak Koç</td><td>—</td><td>Full-stack geliştirici (tek kişilik proje)</td></tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════════ 2 – AKTİVİTE LİSTESİ ══════════════════════ -->
+<h2 class="section">2 – İş Tanımları ve Aktivite Listesi</h2>
+
+<table class="data">
+  <thead>
+    <tr>
+      <th style="width:10mm">#</th>
+      <th style="width:50mm">Aktivite</th>
+      <th>Açıklama</th>
+      <th style="width:20mm">Süre (gün)</th>
+      <th style="width:20mm">Bağımlılık</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>A1</td><td>Gereksinim Analizi</td><td>Fonksiyonel ve fonksiyonel olmayan gereksinimlerin belirlenmesi</td><td>2</td><td>—</td></tr>
+    <tr><td>A2</td><td>Sistem Tasarımı</td><td>Veritabanı şeması, API tasarımı, mimari kararlar</td><td>3</td><td>A1</td></tr>
+    <tr><td>A3</td><td>Veritabanı ve Model Oluşturma</td><td>EF Core modelleri, migration, PostgreSQL kurulumu</td><td>2</td><td>A2</td></tr>
+    <tr><td>A4</td><td>Kimlik Doğrulama (Auth)</td><td>Kayıt, giriş, JWT üretimi, BCrypt hashleme</td><td>2</td><td>A3</td></tr>
+    <tr><td>A5</td><td>Klasör Yönetimi API</td><td>CRUD, iç içe klasör, dosya sayısı gösterimi</td><td>2</td><td>A4</td></tr>
+    <tr><td>A6</td><td>Dosya Yönetimi API</td><td>Upload (multipart), download, soft-delete, versiyonlama</td><td>3</td><td>A5</td></tr>
+    <tr><td>A7</td><td>Paylaşım Linki API</td><td>Token oluşturma, anonim indirme, izin yönetimi</td><td>2</td><td>A6</td></tr>
+    <tr><td>A8</td><td>Admin Paneli API</td><td>Kullanıcı listesi, kota/rol güncelleme, istatistikler</td><td>2</td><td>A4</td></tr>
+    <tr><td>A9</td><td>Şifre Sıfırlama API</td><td>Token oluşturma, token doğrulama, şifre güncelleme</td><td>1</td><td>A4</td></tr>
+    <tr><td>A10</td><td>React Frontend – Temel Sayfalar</td><td>Login, Register, Dashboard iskelet, context/axios kurulumu</td><td>3</td><td>A4</td></tr>
+    <tr><td>A11</td><td>React Frontend – Dosya İşlemleri</td><td>UploadModal, dosya tablosu, klasör grid, breadcrumb</td><td>3</td><td>A10</td></tr>
+    <tr><td>A12</td><td>React Frontend – Paylaşım ve Şifre</td><td>Paylaşım linki kopyalama, ForgotPassword, ResetPassword sayfaları</td><td>2</td><td>A11</td></tr>
+    <tr><td>A13</td><td>Admin Panel UI</td><td>Kullanıcı tablosu, kota/rol güncelleme formları, istatistik kartları</td><td>2</td><td>A12</td></tr>
+    <tr><td>A14</td><td>Test ve Hata Düzeltme</td><td>Manuel API testi (Swagger), frontend entegrasyon testi</td><td>2</td><td>A13</td></tr>
+    <tr><td>A15</td><td>Dökümanlar ve Teslim</td><td>README, proje raporu, GitHub push, ekran görüntüleri</td><td>2</td><td>A14</td></tr>
+  </tbody>
+</table>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 3 – GANTT ══════════════════════ -->
+<h2 class="section">3 – Gantt Diyagramı</h2>
+<p style="margin-bottom:3mm; font-size:9.5pt; color:#475569;">Toplam proje süresi yaklaşık 6 hafta (30 iş günü). Her sütun 2 iş günüdür.</p>
+
+<table class="gantt">
+  <thead>
+    <tr>
+      <th style="width:50mm; text-align:left; padding-left:3mm;">Aktivite</th>
+      <th>H1 G1-2</th><th>H1 G3-4</th><th>H1 G5</th>
+      <th>H2 G1-2</th><th>H2 G3-4</th><th>H2 G5</th>
+      <th>H3 G1-2</th><th>H3 G3-4</th><th>H3 G5</th>
+      <th>H4 G1-2</th><th>H4 G3-4</th><th>H4 G5</th>
+      <th>H5 G1-2</th><th>H5 G3-4</th><th>H5 G5</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- A1 -->
+    <tr>
+      <td class="task-name">A1 – Gereksinim Analizi</td>
+      <td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+    </tr>
+    <!-- A2 -->
+    <tr>
+      <td class="task-name">A2 – Sistem Tasarımı</td>
+      <td><div class="g-empty"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td><td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+    </tr>
+    <!-- A3 -->
+    <tr>
+      <td class="task-name">A3 – Veritabanı ve Model</td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+    </tr>
+    <!-- A4 -->
+    <tr>
+      <td class="task-name">A4 – Auth (JWT / BCrypt)</td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+    </tr>
+    <!-- A5-A6 -->
+    <tr>
+      <td class="task-name">A5-A6 – Klasör &amp; Dosya API</td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td><td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+    </tr>
+    <!-- A7-A9 -->
+    <tr>
+      <td class="task-name">A7-A9 – Paylaşım, Admin, Şifre</td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+    </tr>
+    <!-- A10-A11 -->
+    <tr>
+      <td class="task-name">A10-A11 – Frontend Temel</td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td><td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+    </tr>
+    <!-- A12-A13 -->
+    <tr>
+      <td class="task-name">A12-A13 – Frontend Tamamlama</td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td><td><div class="g-done" style="width:100%"></div></td>
+      <td><div class="g-empty"></div></td>
+    </tr>
+    <!-- A14-A15 -->
+    <tr>
+      <td class="task-name">A14-A15 – Test ve Teslim</td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-empty"></div></td><td><div class="g-empty"></div></td>
+      <td><div class="g-done" style="width:100%"></div></td>
+    </tr>
+  </tbody>
+</table>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 4 – GEREKSİNİM ANALİZİ ══════════════════════ -->
+<h2 class="section">4 – Gereksinim Analizi</h2>
+
+<h3 class="sub">4.1 Fonksiyonel Gereksinimler (FR)</h3>
+<table class="data">
+  <thead>
+    <tr><th style="width:14mm">ID</th><th style="width:32mm">Başlık</th><th>Açıklama</th><th style="width:16mm">Öncelik</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="req-id">FR-01</td><td>Kullanıcı Kaydı</td><td>Sistem, e-posta ve şifre ile yeni kullanıcı kaydını kabul etmeli; şifre BCrypt ile hash'lenmelidir.</td><td><span class="prio-h">Yüksek</span></td></tr>
+    <tr><td class="req-id">FR-02</td><td>Kullanıcı Girişi</td><td>Kullanıcı, e-posta ve şifre ile giriş yapabilmeli; başarılı girişte JWT token döndürülmelidir.</td><td><span class="prio-h">Yüksek</span></td></tr>
+    <tr><td class="req-id">FR-03</td><td>Rol Tabanlı Yetkilendirme</td><td>Sistem Admin, Manager ve User rollerini desteklemeli; her rol farklı yetkilere sahip olmalıdır.</td><td><span class="prio-h">Yüksek</span></td></tr>
+    <tr><td class="req-id">FR-04</td><td>Klasör Oluşturma</td><td>Kullanıcı ana dizinde veya mevcut bir klasörün altında yeni klasör oluşturabilmelidir.</td><td><span class="prio-h">Yüksek</span></td></tr>
+    <tr><td class="req-id">FR-05</td><td>Dosya Yükleme</td><td>Kullanıcı, seçilen klasöre dosya yükleyebilmelidir. Maksimum boyut 100 MB'dır.</td><td><span class="prio-h">Yüksek</span></td></tr>
+    <tr><td class="req-id">FR-06</td><td>Dosya İndirme</td><td>Kullanıcı, yetkili olduğu dosyaları indirebilmelidir.</td><td><span class="prio-h">Yüksek</span></td></tr>
+    <tr><td class="req-id">FR-07</td><td>Dosya Silme (Soft Delete)</td><td>Silme işlemi dosyayı diskten kaldırmamalı; yalnızca IsDeleted bayrağını true yapmalıdır.</td><td><span class="prio-h">Yüksek</span></td></tr>
+    <tr><td class="req-id">FR-08</td><td>Dosya Versiyonlama</td><td>Aynı klasörde aynı isimde dosya yüklendiğinde yeni versiyon oluşturulmalı, eski versiyona dönüş mümkün olmalıdır.</td><td><span class="prio-m">Orta</span></td></tr>
+    <tr><td class="req-id">FR-09</td><td>Dosya Arama</td><td>Kullanıcı, dosya adına göre arama yapabilmelidir.</td><td><span class="prio-m">Orta</span></td></tr>
+    <tr><td class="req-id">FR-10</td><td>Paylaşım Linki</td><td>Kullanıcı, dosya için token tabanlı anonim erişim linki oluşturabilmelidir.</td><td><span class="prio-m">Orta</span></td></tr>
+    <tr><td class="req-id">FR-11</td><td>Depolama Kotası</td><td>Her kullanıcının varsayılan 1 GB depolama kotası olmalı; kota aşılınca yükleme reddedilmelidir.</td><td><span class="prio-m">Orta</span></td></tr>
+    <tr><td class="req-id">FR-12</td><td>Admin Paneli</td><td>Admin kullanıcısı tüm kullanıcıları listeleyebilmeli, rol ve kota değiştirebilmelidir.</td><td><span class="prio-m">Orta</span></td></tr>
+    <tr><td class="req-id">FR-13</td><td>Şifre Sıfırlama</td><td>Kullanıcı e-postasına bağlı token ile şifresini sıfırlayabilmelidir. Token 1 saat geçerlidir.</td><td><span class="prio-l">Düşük</span></td></tr>
+    <tr><td class="req-id">FR-14</td><td>Dosya İzinleri</td><td>Dosya sahibi başka kullanıcılara okuma/yazma izni verebilmelidir.</td><td><span class="prio-l">Düşük</span></td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">4.2 Fonksiyonel Olmayan Gereksinimler (NFR)</h3>
+<table class="data">
+  <thead>
+    <tr><th style="width:14mm">ID</th><th style="width:32mm">Kategori</th><th>Açıklama</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="req-id">NFR-01</td><td>Güvenlik</td><td>Tüm API uç noktaları (paylaşım indirme hariç) JWT Bearer token ile korunmalıdır. Şifreler açık metin olarak saklanmamalıdır.</td></tr>
+    <tr><td class="req-id">NFR-02</td><td>Güvenlik</td><td>Kullanıcı yalnızca kendi dosya ve klasörlerine erişebilmelidir (ownership kontrolü).</td></tr>
+    <tr><td class="req-id">NFR-03</td><td>Performans</td><td>Standart dosya listeleme isteği 500 ms altında yanıt vermelidir.</td></tr>
+    <tr><td class="req-id">NFR-04</td><td>Ölçeklenebilirlik</td><td>Dosya depolama, ilerleyen sürümlerde S3 uyumlu nesne depolamaya (MinIO / AWS S3) geçişe uygun tasarlanmalıdır.</td></tr>
+    <tr><td class="req-id">NFR-05</td><td>Kullanılabilirlik</td><td>Arayüz mobil uyumlu (responsive) olmalı; Tailwind CSS ile A4 baskı desteği sağlanmalıdır.</td></tr>
+    <tr><td class="req-id">NFR-06</td><td>Sürdürülebilirlik</td><td>Backend katmanlı mimaride (Controller → Service → Repository/DbContext) geliştirilmeli; her servis kendi interface'ini implemente etmelidir.</td></tr>
+    <tr><td class="req-id">NFR-07</td><td>Uyumluluk</td><td>Uygulama .NET 10 ve Node.js 18+ ile çalışmalıdır.</td></tr>
+    <tr><td class="req-id">NFR-08</td><td>Hata Yönetimi</td><td>API hataları standart JSON formatında döndürülmeli; HTTP durum kodları RFC 7231'e uygun olmalıdır.</td></tr>
+  </tbody>
+</table>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 5 – USE CASE ══════════════════════ -->
+<h2 class="section">5 – Use Case Diyagramları</h2>
+
+<h3 class="sub">5.1 Genel Sistem Use Case Diyagramı</h3>
+<div class="diagram-box no-break">
+<svg viewBox="0 0 720 440" width="100%" font-family="Segoe UI,Arial,sans-serif" font-size="12">
+  <!-- Sistem sınırı -->
+  <rect x="160" y="10" width="530" height="420" rx="8" fill="#f8fafc" stroke="#1e40af" stroke-width="2"/>
+  <text x="415" y="30" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="13">CloudFile Sistemi</text>
+
+  <!-- Aktörler -->
+  <!-- User -->
+  <circle cx="55" cy="80" r="14" fill="none" stroke="#1e40af" stroke-width="2"/>
+  <line x1="55" y1="94" x2="55" y2="130" stroke="#1e40af" stroke-width="2"/>
+  <line x1="30" y1="110" x2="80" y2="110" stroke="#1e40af" stroke-width="2"/>
+  <line x1="55" y1="130" x2="35" y2="155" stroke="#1e40af" stroke-width="2"/>
+  <line x1="55" y1="130" x2="75" y2="155" stroke="#1e40af" stroke-width="2"/>
+  <text x="55" y="170" text-anchor="middle" fill="#1e40af" font-weight="600">User</text>
+
+  <!-- Manager -->
+  <circle cx="55" cy="250" r="14" fill="none" stroke="#0f766e" stroke-width="2"/>
+  <line x1="55" y1="264" x2="55" y2="300" stroke="#0f766e" stroke-width="2"/>
+  <line x1="30" y1="280" x2="80" y2="280" stroke="#0f766e" stroke-width="2"/>
+  <line x1="55" y1="300" x2="35" y2="325" stroke="#0f766e" stroke-width="2"/>
+  <line x1="55" y1="300" x2="75" y2="325" stroke="#0f766e" stroke-width="2"/>
+  <text x="55" y="340" text-anchor="middle" fill="#0f766e" font-weight="600">Manager</text>
+
+  <!-- Admin -->
+  <circle cx="55" cy="390" r="14" fill="none" stroke="#7c3aed" stroke-width="2"/>
+  <line x1="55" y1="404" x2="55" y2="430" stroke="#7c3aed" stroke-width="2"/>
+  <line x1="30" y1="415" x2="80" y2="415" stroke="#7c3aed" stroke-width="2"/>
+  <line x1="55" y1="430" x2="35" y2="440" stroke="#7c3aed" stroke-width="2"/>
+  <line x1="55" y1="430" x2="75" y2="440" stroke="#7c3aed" stroke-width="2"/>
+  <text x="55" y="455" text-anchor="middle" fill="#7c3aed" font-weight="600">Admin</text>
+
+  <!-- Use Case ellipsleri -->
+  <!-- Kayıt / Giriş -->
+  <ellipse cx="310" cy="55" rx="90" ry="18" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5"/>
+  <text x="310" y="59" text-anchor="middle" font-size="11">Kayıt / Giriş Yap</text>
+
+  <!-- Klasör Yönetimi -->
+  <ellipse cx="310" cy="105" rx="90" ry="18" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5"/>
+  <text x="310" y="109" text-anchor="middle" font-size="11">Klasör Yönet</text>
+
+  <!-- Dosya Yükle -->
+  <ellipse cx="310" cy="155" rx="90" ry="18" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5"/>
+  <text x="310" y="159" text-anchor="middle" font-size="11">Dosya Yükle</text>
+
+  <!-- Dosya İndir -->
+  <ellipse cx="310" cy="205" rx="90" ry="18" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5"/>
+  <text x="310" y="209" text-anchor="middle" font-size="11">Dosya İndir</text>
+
+  <!-- Dosya Sil -->
+  <ellipse cx="310" cy="255" rx="90" ry="18" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5"/>
+  <text x="310" y="259" text-anchor="middle" font-size="11">Dosya Sil</text>
+
+  <!-- Paylaşım Linki -->
+  <ellipse cx="310" cy="305" rx="90" ry="18" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5"/>
+  <text x="310" y="309" text-anchor="middle" font-size="11">Paylaşım Linki Oluştur</text>
+
+  <!-- Şifre Sıfırla -->
+  <ellipse cx="310" cy="355" rx="90" ry="18" fill="#dbeafe" stroke="#1e40af" stroke-width="1.5"/>
+  <text x="310" y="359" text-anchor="middle" font-size="11">Şifre Sıfırla</text>
+
+  <!-- Admin Paneli -->
+  <ellipse cx="540" cy="205" rx="100" ry="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="540" y="209" text-anchor="middle" font-size="11">Admin Paneli – Kullanıcı Yönet</text>
+
+  <!-- Kota Değiştir -->
+  <ellipse cx="540" cy="255" rx="100" ry="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="540" y="259" text-anchor="middle" font-size="11">Kota / Rol Değiştir</text>
+
+  <!-- Versiyona Dön -->
+  <ellipse cx="540" cy="305" rx="100" ry="18" fill="#d1fae5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="540" y="309" text-anchor="middle" font-size="11">Eski Versiyona Dön</text>
+
+  <!-- Bağlantı çizgileri – User -->
+  <line x1="80" y1="80" x2="220" y2="57" stroke="#1e40af" stroke-width="1" stroke-dasharray="4,2"/>
+  <line x1="80" y1="85" x2="220" y2="107" stroke="#1e40af" stroke-width="1" stroke-dasharray="4,2"/>
+  <line x1="80" y1="90" x2="220" y2="155" stroke="#1e40af" stroke-width="1" stroke-dasharray="4,2"/>
+  <line x1="80" y1="92" x2="220" y2="205" stroke="#1e40af" stroke-width="1" stroke-dasharray="4,2"/>
+  <line x1="80" y1="94" x2="220" y2="255" stroke="#1e40af" stroke-width="1" stroke-dasharray="4,2"/>
+  <line x1="80" y1="96" x2="220" y2="305" stroke="#1e40af" stroke-width="1" stroke-dasharray="4,2"/>
+  <line x1="80" y1="98" x2="220" y2="355" stroke="#1e40af" stroke-width="1" stroke-dasharray="4,2"/>
+
+  <!-- Manager – Versiyona Dön -->
+  <line x1="80" y1="255" x2="440" y2="305" stroke="#0f766e" stroke-width="1" stroke-dasharray="4,2"/>
+
+  <!-- Admin -->
+  <line x1="80" y1="390" x2="440" y2="207" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4,2"/>
+  <line x1="80" y1="392" x2="440" y2="257" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4,2"/>
+</svg>
+</div>
+
+<h3 class="sub">5.2 Use Case Senaryoları</h3>
+<table class="data no-break">
+  <thead><tr><th>Use Case</th><th>Aktör</th><th>Ana Senaryo</th><th>Alternatif Senaryo</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><b>UC-01</b> Dosya Yükle</td>
+      <td>User / Manager</td>
+      <td>1. Klasör seçilir. 2. Dosya seçilir (≤100 MB). 3. POST /api/files çağrılır. 4. Kota kontrol edilir. 5. Dosya diske yazılır. 6. FileItem kaydı oluşturulur.</td>
+      <td>Kota aşıldıysa 400 döner. Aynı isimde dosya varsa versiyon artar.</td>
+    </tr>
+    <tr>
+      <td><b>UC-02</b> Paylaşım Linki</td>
+      <td>User / Manager</td>
+      <td>1. Dosya seçilir. 2. POST /api/share çağrılır. 3. Benzersiz token üretilir. 4. ShareLink kaydı oluşturulur. 5. Link panoya kopyalanır.</td>
+      <td>Aynı dosya için ikinci link oluşturulabilir; her biri bağımsız token alır.</td>
+    </tr>
+    <tr>
+      <td><b>UC-03</b> Şifre Sıfırla</td>
+      <td>User (Anonim)</td>
+      <td>1. E-posta girilir. 2. POST /api/auth/forgot-password çağrılır. 3. Token oluşturulur. 4. Kullanıcı token ile /reset-password sayfasına gider. 5. Yeni şifre set edilir.</td>
+      <td>Token süresi dolmuşsa (1 saat) 400 döner. Hatalı token 400 döner.</td>
+    </tr>
+    <tr>
+      <td><b>UC-04</b> Kullanıcı Yönet</td>
+      <td>Admin</td>
+      <td>1. Admin paneline gidilir. 2. Kullanıcı listesi yüklenir. 3. Kota veya rol düzenleme butonuna tıklanır. 4. Form gönderilir. 5. Değişiklik kaydedilir.</td>
+      <td>Admin kendi rolünü değiştiremez.</td>
+    </tr>
+  </tbody>
+</table>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 6 – CLASS DİYAGRAMI ══════════════════════ -->
+<h2 class="section">6 – Sistem Sınıf Diyagramı</h2>
+
+<div class="diagram-box no-break">
+<svg viewBox="0 0 760 520" width="100%" font-family="Consolas,'Courier New',monospace" font-size="10">
+  <!-- ── User ── -->
+  <rect x="10" y="10" width="170" height="160" rx="4" fill="#eff6ff" stroke="#1e40af" stroke-width="1.5"/>
+  <rect x="10" y="10" width="170" height="24" rx="4" fill="#1e40af"/>
+  <text x="95" y="27" text-anchor="middle" fill="white" font-weight="700" font-size="11">User</text>
+  <text x="18" y="50" fill="#334155">+ Id : Guid</text>
+  <text x="18" y="63" fill="#334155">+ Email : string</text>
+  <text x="18" y="76" fill="#334155">+ PasswordHash : string</text>
+  <text x="18" y="89" fill="#334155">+ Role : string</text>
+  <text x="18" y="102" fill="#334155">+ StorageQuota : long</text>
+  <text x="18" y="115" fill="#334155">+ UsedStorage : long</text>
+  <text x="18" y="128" fill="#334155">+ IsActive : bool</text>
+  <text x="18" y="141" fill="#334155">+ CreatedAt : DateTime</text>
+  <line x1="10" y1="150" x2="180" y2="150" stroke="#94a3b8" stroke-width="1"/>
+  <text x="18" y="163" fill="#1e40af">+ GetFolders()</text>
+
+  <!-- ── Folder ── -->
+  <rect x="210" y="10" width="170" height="145" rx="4" fill="#eff6ff" stroke="#1e40af" stroke-width="1.5"/>
+  <rect x="210" y="10" width="170" height="24" rx="4" fill="#1e40af"/>
+  <text x="295" y="27" text-anchor="middle" fill="white" font-weight="700" font-size="11">Folder</text>
+  <text x="218" y="50" fill="#334155">+ Id : Guid</text>
+  <text x="218" y="63" fill="#334155">+ Name : string</text>
+  <text x="218" y="76" fill="#334155">+ OwnerId : Guid</text>
+  <text x="218" y="89" fill="#334155">+ ParentFolderId : Guid?</text>
+  <text x="218" y="102" fill="#334155">+ IsDeleted : bool</text>
+  <text x="218" y="115" fill="#334155">+ CreatedAt : DateTime</text>
+  <line x1="210" y1="124" x2="380" y2="124" stroke="#94a3b8" stroke-width="1"/>
+  <text x="218" y="137" fill="#1e40af">+ GetChildren()</text>
+
+  <!-- ── FileItem ── -->
+  <rect x="410" y="10" width="190" height="175" rx="4" fill="#eff6ff" stroke="#1e40af" stroke-width="1.5"/>
+  <rect x="410" y="10" width="190" height="24" rx="4" fill="#1e40af"/>
+  <text x="505" y="27" text-anchor="middle" fill="white" font-weight="700" font-size="11">FileItem</text>
+  <text x="418" y="50" fill="#334155">+ Id : Guid</text>
+  <text x="418" y="63" fill="#334155">+ OriginalFileName : string</text>
+  <text x="418" y="76" fill="#334155">+ StoredFileName : string</text>
+  <text x="418" y="89" fill="#334155">+ ContentType : string</text>
+  <text x="418" y="102" fill="#334155">+ Size : long</text>
+  <text x="418" y="115" fill="#334155">+ CurrentVersion : int</text>
+  <text x="418" y="128" fill="#334155">+ OwnerId : Guid</text>
+  <text x="418" y="141" fill="#334155">+ FolderId : Guid?</text>
+  <text x="418" y="154" fill="#334155">+ IsDeleted : bool</text>
+  <line x1="410" y1="163" x2="600" y2="163" stroke="#94a3b8" stroke-width="1"/>
+  <text x="418" y="176" fill="#1e40af">+ Download()</text>
+
+  <!-- ── FileVersion ── -->
+  <rect x="620" y="10" width="130" height="145" rx="4" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="620" y="10" width="130" height="24" rx="4" fill="#16a34a"/>
+  <text x="685" y="27" text-anchor="middle" fill="white" font-weight="700" font-size="11">FileVersion</text>
+  <text x="628" y="50" fill="#334155">+ Id : Guid</text>
+  <text x="628" y="63" fill="#334155">+ FileItemId : Guid</text>
+  <text x="628" y="76" fill="#334155">+ VersionNumber : int</text>
+  <text x="628" y="89" fill="#334155">+ StoredFileName : string</text>
+  <text x="628" y="102" fill="#334155">+ Size : long</text>
+  <text x="628" y="115" fill="#334155">+ CreatedAt : DateTime</text>
+  <line x1="620" y1="124" x2="750" y2="124" stroke="#94a3b8" stroke-width="1"/>
+  <text x="628" y="137" fill="#16a34a">+ Restore()</text>
+
+  <!-- ── ShareLink ── -->
+  <rect x="10" y="250" width="175" height="145" rx="4" fill="#fefce8" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="10" y="250" width="175" height="24" rx="4" fill="#d97706"/>
+  <text x="97" y="267" text-anchor="middle" fill="white" font-weight="700" font-size="11">ShareLink</text>
+  <text x="18" y="290" fill="#334155">+ Id : Guid</text>
+  <text x="18" y="303" fill="#334155">+ Token : string</text>
+  <text x="18" y="316" fill="#334155">+ FileItemId : Guid</text>
+  <text x="18" y="329" fill="#334155">+ AllowDownload : bool</text>
+  <text x="18" y="342" fill="#334155">+ ExpiresAt : DateTime?</text>
+  <text x="18" y="355" fill="#334155">+ CreatedAt : DateTime</text>
+  <line x1="10" y1="364" x2="185" y2="364" stroke="#94a3b8" stroke-width="1"/>
+  <text x="18" y="377" fill="#d97706">+ Validate()</text>
+
+  <!-- ── FilePermission ── -->
+  <rect x="215" y="250" width="175" height="145" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="215" y="250" width="175" height="24" rx="4" fill="#dc2626"/>
+  <text x="302" y="267" text-anchor="middle" fill="white" font-weight="700" font-size="11">FilePermission</text>
+  <text x="223" y="290" fill="#334155">+ Id : Guid</text>
+  <text x="223" y="303" fill="#334155">+ FileItemId : Guid</text>
+  <text x="223" y="316" fill="#334155">+ UserId : Guid</text>
+  <text x="223" y="329" fill="#334155">+ CanRead : bool</text>
+  <text x="223" y="342" fill="#334155">+ CanWrite : bool</text>
+  <text x="223" y="355" fill="#334155">+ GrantedAt : DateTime</text>
+  <line x1="215" y1="364" x2="390" y2="364" stroke="#94a3b8" stroke-width="1"/>
+  <text x="223" y="377" fill="#dc2626">+ Check()</text>
+
+  <!-- ── PasswordResetToken ── -->
+  <rect x="420" y="250" width="195" height="145" rx="4" fill="#fdf4ff" stroke="#9333ea" stroke-width="1.5"/>
+  <rect x="420" y="250" width="195" height="24" rx="4" fill="#9333ea"/>
+  <text x="517" y="267" text-anchor="middle" fill="white" font-weight="700" font-size="11">PasswordResetToken</text>
+  <text x="428" y="290" fill="#334155">+ Id : Guid</text>
+  <text x="428" y="303" fill="#334155">+ Token : string</text>
+  <text x="428" y="316" fill="#334155">+ UserId : Guid</text>
+  <text x="428" y="329" fill="#334155">+ ExpiresAt : DateTime</text>
+  <text x="428" y="342" fill="#334155">+ IsUsed : bool</text>
+  <text x="428" y="355" fill="#334155">+ CreatedAt : DateTime</text>
+  <line x1="420" y1="364" x2="615" y2="364" stroke="#94a3b8" stroke-width="1"/>
+  <text x="428" y="377" fill="#9333ea">+ IsExpired()</text>
+
+  <!-- İlişki çizgileri -->
+  <!-- User 1..* Folder -->
+  <line x1="95" y1="170" x2="295" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="180" y="165" text-anchor="middle" fill="#64748b" font-size="9">1..*</text>
+
+  <!-- User 1..* FileItem -->
+  <line x1="180" y1="80" x2="410" y2="80" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="300" y="75" text-anchor="middle" fill="#64748b" font-size="9">1..*</text>
+
+  <!-- FileItem 1..* FileVersion -->
+  <line x1="600" y1="80" x2="620" y2="80" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="610" y="75" text-anchor="middle" fill="#64748b" font-size="9">1..*</text>
+
+  <!-- FileItem 1..* ShareLink -->
+  <line x1="505" y1="185" x2="97" y2="250" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+
+  <!-- User 1..* PasswordResetToken -->
+  <line x1="95" y1="170" x2="517" y2="250" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+
+  <!-- FileItem 1..* FilePermission -->
+  <line x1="505" y1="185" x2="302" y2="250" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+<h3 class="sub">6.1 Servis Katmanı Sınıfları</h3>
+<table class="data no-break">
+  <thead><tr><th>Sınıf</th><th>Sorumluluk</th><th>Bağımlılıklar</th></tr></thead>
+  <tbody>
+    <tr><td><code>AuthService</code></td><td>Kayıt, giriş, JWT üretimi, şifre sıfırlama token yönetimi</td><td>AppDbContext, JwtHelper, BCrypt</td></tr>
+    <tr><td><code>FileStorageService</code></td><td>Dosya yükleme/indirme, versiyonlama, kota kontrolü</td><td>AppDbContext, IWebHostEnvironment</td></tr>
+    <tr><td><code>FolderService</code></td><td>Klasör CRUD, iç içe klasör navigasyonu</td><td>AppDbContext</td></tr>
+    <tr><td><code>ShareService</code></td><td>Paylaşım token üretimi, anonim indirme doğrulama</td><td>AppDbContext, FileStorageService</td></tr>
+    <tr><td><code>AdminService</code></td><td>Kullanıcı listesi, kota/rol güncelleme, sistem istatistikleri</td><td>AppDbContext</td></tr>
+  </tbody>
+</table>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 7 – SEQUENCE DİYAGRAMLARI ══════════════════════ -->
+<h2 class="section">7 – Ardışıklık Diyagramları (Sequence Diagrams)</h2>
+
+<h3 class="sub">7.1 Kullanıcı Giriş (Login) Akışı</h3>
+<div class="seq-actors">
+  <div class="actor-box">🌐 Browser</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">⚛️ React</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">🔧 AuthController</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">⚙️ AuthService</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">🗄️ PostgreSQL</div>
+</div>
+<div class="no-break">
+  <div class="seq-step"><span class="step-no">1</span><span>Kullanıcı Login formuna e-posta ve şifre girer, "Giriş Yap" düğmesine basar.</span></div>
+  <div class="seq-step"><span class="step-no">2</span><span>React, <code>POST /api/auth/login</code> isteği gönderir (JSON body: <code>{email, password}</code>).</span></div>
+  <div class="seq-step"><span class="step-no">3</span><span>AuthController, AuthService.LoginAsync() metodunu çağırır.</span></div>
+  <div class="seq-step"><span class="step-no">4</span><span>AuthService, <code>Users</code> tablosundan e-posta ile kullanıcıyı sorgular (<code>SELECT ... WHERE Email = @email</code>).</span></div>
+  <div class="seq-step"><span class="step-no">5</span><span>Kullanıcı bulunamazsa veya IsActive = false ise → 401 Unauthorized döner.</span></div>
+  <div class="seq-step"><span class="step-no">6</span><span>BCrypt.Verify(inputPassword, passwordHash) ile şifre doğrulanır.</span></div>
+  <div class="seq-step"><span class="step-no">7</span><span>Şifre yanlışsa → 401 Unauthorized döner.</span></div>
+  <div class="seq-step"><span class="step-no">8</span><span>JwtHelper.GenerateToken() ile Claims içeren JWT oluşturulur (sub, email, role, exp).</span></div>
+  <div class="seq-step"><span class="step-no">9</span><span>Controller, 200 OK ile <code>{token, user}</code> döner.</span></div>
+  <div class="seq-step"><span class="step-no">10</span><span>React, token'ı <code>localStorage</code>'a kaydeder; AuthContext güncellenir.</span></div>
+  <div class="seq-step"><span class="step-no">11</span><span>Role'e göre <code>/admin</code> veya <code>/</code> (Dashboard) sayfasına yönlendirilir.</span></div>
+</div>
+
+<h3 class="sub">7.2 Dosya Yükleme (Upload) Akışı</h3>
+<div class="seq-actors">
+  <div class="actor-box">🌐 Browser</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">⚛️ UploadModal</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">🔧 FilesController</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">⚙️ FileStorageService</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">💾 Disk + DB</div>
+</div>
+<div class="no-break">
+  <div class="seq-step"><span class="step-no">1</span><span>Kullanıcı UploadModal'da dosya seçer ve "Yükle" düğmesine basar.</span></div>
+  <div class="seq-step"><span class="step-no">2</span><span>React, <code>POST /api/files</code> isteği gönderir (multipart/form-data; folderId, file).</span></div>
+  <div class="seq-step"><span class="step-no">3</span><span>FilesController, [Authorize] attribute ile JWT doğrular; kullanıcı kimliği alınır.</span></div>
+  <div class="seq-step"><span class="step-no">4</span><span>FileStorageService.UploadAsync() çağrılır.</span></div>
+  <div class="seq-step"><span class="step-no">5</span><span>Kullanıcının kullanılan depolaması + dosya boyutu > kota ise → 400 Bad Request döner.</span></div>
+  <div class="seq-step"><span class="step-no">6</span><span>Aynı klasörde aynı isimde dosya var mı kontrol edilir.</span></div>
+  <div class="seq-step"><span class="step-no">7a</span><span><b>Yeni dosya:</b> FileItem oluşturulur (CurrentVersion = 1); FileVersion v1 kaydedilir; dosya diske yazılır.</span></div>
+  <div class="seq-step"><span class="step-no">7b</span><span><b>Aynı isimde var:</b> CurrentVersion artırılır; yeni FileVersion kaydedilir; eski dosya diskte tutulur.</span></div>
+  <div class="seq-step"><span class="step-no">8</span><span>User.UsedStorage güncellenir.</span></div>
+  <div class="seq-step"><span class="step-no">9</span><span>201 Created ile yeni FileItem DTO döner; Dashboard otomatik yenilenir.</span></div>
+</div>
+
+<h3 class="sub">7.3 Şifre Sıfırlama Akışı</h3>
+<div class="seq-actors">
+  <div class="actor-box">🌐 Browser</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">⚛️ ForgotPassword</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">🔧 AuthController</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">⚙️ AuthService</div>
+  <div style="align-self:center;color:#94a3b8;font-size:18pt">→</div>
+  <div class="actor-box">🗄️ PostgreSQL</div>
+</div>
+<div class="no-break">
+  <div class="seq-step"><span class="step-no">1</span><span>Kullanıcı "Şifremi Unuttum" linkine tıklar; ForgotPassword sayfası açılır.</span></div>
+  <div class="seq-step"><span class="step-no">2</span><span>E-posta adresi girilip form gönderilir → <code>POST /api/auth/forgot-password</code>.</span></div>
+  <div class="seq-step"><span class="step-no">3</span><span>AuthService, e-posta ile kullanıcıyı arar. Bulunamazsa yine 200 döner (güvenlik için).</span></div>
+  <div class="seq-step"><span class="step-no">4</span><span>Mevcut geçerli tokenlar IsUsed = true yapılır.</span></div>
+  <div class="seq-step"><span class="step-no">5</span><span>Yeni PasswordResetToken oluşturulur (ExpiresAt = şimdi + 1 saat).</span></div>
+  <div class="seq-step"><span class="step-no">6</span><span>200 OK ile token response'da döner (demo; gerçekte e-posta gönderilmeli).</span></div>
+  <div class="seq-step"><span class="step-no">7</span><span>Kullanıcı token'ı kopyalar; <code>/reset-password?token=XXX</code> adresine gider.</span></div>
+  <div class="seq-step"><span class="step-no">8</span><span>Yeni şifre girilip form gönderilir → <code>POST /api/auth/reset-password</code>.</span></div>
+  <div class="seq-step"><span class="step-no">9</span><span>Token geçerliliği ve süresi kontrol edilir.</span></div>
+  <div class="seq-step"><span class="step-no">10</span><span>Şifre BCrypt ile yeniden hash'lenip User kaydı güncellenir; token IsUsed = true yapılır.</span></div>
+  <div class="seq-step"><span class="step-no">11</span><span>200 OK ile "Şifreniz sıfırlandı" mesajı döner; kullanıcı /login sayfasına yönlendirilir.</span></div>
+</div>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 8 – VERİTABANI / ER ══════════════════════ -->
+<h2 class="section">8 – Veritabanı Tasarımı – ER Diyagramı</h2>
+
+<div class="info-box">
+  Veritabanı: <b>PostgreSQL 17</b> | ORM: <b>Entity Framework Core 9 (Npgsql)</b> | Migration tool: <code>dotnet ef migrations add</code>
+</div>
+
+<!-- Users -->
+<div class="er-table no-break">
+  <div class="er-table-title">👤 Users</div>
+  <table class="data">
+    <thead><tr><th>Sütun</th><th>Tip</th><th>Kısıt</th><th>Açıklama</th></tr></thead>
+    <tbody>
+      <tr><td><code>Id</code></td><td>uuid</td><td>PK, NOT NULL</td><td>Birincil anahtar (Guid)</td></tr>
+      <tr><td><code>Email</code></td><td>varchar(255)</td><td>UNIQUE, NOT NULL</td><td>Kullanıcı e-postası (küçük harf)</td></tr>
+      <tr><td><code>PasswordHash</code></td><td>text</td><td>NOT NULL</td><td>BCrypt hash (cost=12)</td></tr>
+      <tr><td><code>FullName</code></td><td>varchar(150)</td><td>NOT NULL</td><td>Görünen ad</td></tr>
+      <tr><td><code>Role</code></td><td>varchar(20)</td><td>NOT NULL, DEFAULT 'User'</td><td>Admin / Manager / User</td></tr>
+      <tr><td><code>StorageQuota</code></td><td>bigint</td><td>NOT NULL, DEFAULT 1073741824</td><td>Kota (byte, 1 GB)</td></tr>
+      <tr><td><code>UsedStorage</code></td><td>bigint</td><td>NOT NULL, DEFAULT 0</td><td>Kullanılan alan (byte)</td></tr>
+      <tr><td><code>IsActive</code></td><td>boolean</td><td>NOT NULL, DEFAULT true</td><td>Hesap aktiflik durumu</td></tr>
+      <tr><td><code>CreatedAt</code></td><td>timestamptz</td><td>NOT NULL</td><td>Kayıt tarihi (UTC)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Folders -->
+<div class="er-table no-break">
+  <div class="er-table-title">📁 Folders</div>
+  <table class="data">
+    <thead><tr><th>Sütun</th><th>Tip</th><th>Kısıt</th><th>Açıklama</th></tr></thead>
+    <tbody>
+      <tr><td><code>Id</code></td><td>uuid</td><td>PK</td><td>Birincil anahtar</td></tr>
+      <tr><td><code>Name</code></td><td>varchar(255)</td><td>NOT NULL</td><td>Klasör adı</td></tr>
+      <tr><td><code>OwnerId</code></td><td>uuid</td><td>FK → Users.Id (CASCADE)</td><td>Sahibi</td></tr>
+      <tr><td><code>ParentFolderId</code></td><td>uuid</td><td>FK → Folders.Id (SET NULL), NULLABLE</td><td>Üst klasör (iç içe yapı)</td></tr>
+      <tr><td><code>IsDeleted</code></td><td>boolean</td><td>DEFAULT false</td><td>Soft delete bayrağı</td></tr>
+      <tr><td><code>CreatedAt</code></td><td>timestamptz</td><td>NOT NULL</td><td>Oluşturma tarihi</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FileItems -->
+<div class="er-table no-break">
+  <div class="er-table-title">📄 FileItems</div>
+  <table class="data">
+    <thead><tr><th>Sütun</th><th>Tip</th><th>Kısıt</th><th>Açıklama</th></tr></thead>
+    <tbody>
+      <tr><td><code>Id</code></td><td>uuid</td><td>PK</td><td>Birincil anahtar</td></tr>
+      <tr><td><code>OriginalFileName</code></td><td>varchar(500)</td><td>NOT NULL</td><td>Orijinal dosya adı</td></tr>
+      <tr><td><code>StoredFileName</code></td><td>varchar(500)</td><td>NOT NULL</td><td>Diskteki dosya adı (GUID bazlı)</td></tr>
+      <tr><td><code>ContentType</code></td><td>varchar(100)</td><td></td><td>MIME tipi</td></tr>
+      <tr><td><code>Size</code></td><td>bigint</td><td>NOT NULL</td><td>Boyut (byte)</td></tr>
+      <tr><td><code>CurrentVersion</code></td><td>integer</td><td>DEFAULT 1</td><td>Aktif versiyon numarası</td></tr>
+      <tr><td><code>OwnerId</code></td><td>uuid</td><td>FK → Users.Id (CASCADE)</td><td>Dosya sahibi</td></tr>
+      <tr><td><code>FolderId</code></td><td>uuid</td><td>FK → Folders.Id (SET NULL), NULLABLE</td><td>Bağlı klasör</td></tr>
+      <tr><td><code>IsDeleted</code></td><td>boolean</td><td>DEFAULT false</td><td>Soft delete</td></tr>
+      <tr><td><code>CreatedAt</code></td><td>timestamptz</td><td>NOT NULL</td><td>İlk yükleme tarihi</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FileVersions -->
+<div class="er-table no-break">
+  <div class="er-table-title">🔄 FileVersions</div>
+  <table class="data">
+    <thead><tr><th>Sütun</th><th>Tip</th><th>Kısıt</th><th>Açıklama</th></tr></thead>
+    <tbody>
+      <tr><td><code>Id</code></td><td>uuid</td><td>PK</td><td>Birincil anahtar</td></tr>
+      <tr><td><code>FileItemId</code></td><td>uuid</td><td>FK → FileItems.Id (CASCADE)</td><td>Bağlı dosya</td></tr>
+      <tr><td><code>VersionNumber</code></td><td>integer</td><td>NOT NULL</td><td>Versiyon numarası</td></tr>
+      <tr><td><code>StoredFileName</code></td><td>varchar(500)</td><td>NOT NULL</td><td>Bu versiyona ait fiziksel dosya adı</td></tr>
+      <tr><td><code>Size</code></td><td>bigint</td><td>NOT NULL</td><td>Bu versiyonun boyutu</td></tr>
+      <tr><td><code>CreatedAt</code></td><td>timestamptz</td><td>NOT NULL</td><td>Yüklenme tarihi</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ShareLinks -->
+<div class="er-table no-break">
+  <div class="er-table-title">🔗 ShareLinks</div>
+  <table class="data">
+    <thead><tr><th>Sütun</th><th>Tip</th><th>Kısıt</th><th>Açıklama</th></tr></thead>
+    <tbody>
+      <tr><td><code>Id</code></td><td>uuid</td><td>PK</td><td>Birincil anahtar</td></tr>
+      <tr><td><code>Token</code></td><td>varchar(100)</td><td>UNIQUE, NOT NULL</td><td>Anonim erişim token'ı</td></tr>
+      <tr><td><code>FileItemId</code></td><td>uuid</td><td>FK → FileItems.Id (CASCADE)</td><td>Paylaşılan dosya</td></tr>
+      <tr><td><code>CreatedByUserId</code></td><td>uuid</td><td>FK → Users.Id</td><td>Link oluşturan kullanıcı</td></tr>
+      <tr><td><code>AllowDownload</code></td><td>boolean</td><td>DEFAULT true</td><td>İndirme izni</td></tr>
+      <tr><td><code>ExpiresAt</code></td><td>timestamptz</td><td>NULLABLE</td><td>Bitiş tarihi (null = süresiz)</td></tr>
+      <tr><td><code>CreatedAt</code></td><td>timestamptz</td><td>NOT NULL</td><td>Oluşturma tarihi</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FilePermissions -->
+<div class="er-table no-break">
+  <div class="er-table-title">🔐 FilePermissions</div>
+  <table class="data">
+    <thead><tr><th>Sütun</th><th>Tip</th><th>Kısıt</th><th>Açıklama</th></tr></thead>
+    <tbody>
+      <tr><td><code>Id</code></td><td>uuid</td><td>PK</td><td>Birincil anahtar</td></tr>
+      <tr><td><code>FileItemId</code></td><td>uuid</td><td>FK → FileItems.Id (CASCADE)</td><td>İzin verilen dosya</td></tr>
+      <tr><td><code>UserId</code></td><td>uuid</td><td>FK → Users.Id (CASCADE)</td><td>İzin verilen kullanıcı</td></tr>
+      <tr><td><code>CanRead</code></td><td>boolean</td><td>DEFAULT true</td><td>Okuma izni</td></tr>
+      <tr><td><code>CanWrite</code></td><td>boolean</td><td>DEFAULT false</td><td>Yazma izni</td></tr>
+      <tr><td><code>GrantedAt</code></td><td>timestamptz</td><td>NOT NULL</td><td>İzin verilme tarihi</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PasswordResetTokens -->
+<div class="er-table no-break">
+  <div class="er-table-title">🔑 PasswordResetTokens</div>
+  <table class="data">
+    <thead><tr><th>Sütun</th><th>Tip</th><th>Kısıt</th><th>Açıklama</th></tr></thead>
+    <tbody>
+      <tr><td><code>Id</code></td><td>uuid</td><td>PK</td><td>Birincil anahtar</td></tr>
+      <tr><td><code>Token</code></td><td>varchar(100)</td><td>UNIQUE, NOT NULL</td><td>Sıfırlama token'ı (32-char hex)</td></tr>
+      <tr><td><code>UserId</code></td><td>uuid</td><td>FK → Users.Id (CASCADE)</td><td>Token sahibi kullanıcı</td></tr>
+      <tr><td><code>ExpiresAt</code></td><td>timestamptz</td><td>NOT NULL</td><td>Bitiş tarihi (şimdi + 1 saat)</td></tr>
+      <tr><td><code>IsUsed</code></td><td>boolean</td><td>DEFAULT false</td><td>Kullanılıp kullanılmadığı</td></tr>
+      <tr><td><code>CreatedAt</code></td><td>timestamptz</td><td>NOT NULL</td><td>Oluşturma tarihi</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 9 – TEKNİK RAPOR / API ══════════════════════ -->
+<h2 class="section">9 – Teknik Rapor ve API Dokümantasyonu</h2>
+
+<h3 class="sub">9.1 Mimari Genel Bakış</h3>
+<p>
+  Uygulama, standart katmanlı mimari yaklaşımını benimser:
+  <b>Presentation Layer</b> (React SPA) → <b>API Layer</b> (ASP.NET Core Controllers) → <b>Service Layer</b> (iş mantığı) → <b>Data Layer</b> (EF Core + PostgreSQL).
+</p>
+<ul>
+  <li><b>Frontend:</b> React 18 + Vite (port 3000). Axios interceptor aracılığıyla tüm isteklere <code>Authorization: Bearer &lt;token&gt;</code> header'ı otomatik eklenir. React Router DOM v6 ile sayfa yönlendirmesi yapılır.</li>
+  <li><b>Backend:</b> ASP.NET Core Web API (.NET 10), port 5200. CORS politikası React origin'ini kabul edecek şekilde yapılandırılmıştır.</li>
+  <li><b>Kimlik Doğrulama:</b> Giriş sonrası 7 günlük JWT token üretilir. Token payload: <code>sub</code> (userId), <code>email</code>, <code>role</code>, <code>exp</code>.</li>
+  <li><b>Depolama:</b> Dosyalar <code>uploads/</code> klasörüne GUID-tabanlı isimlendirme ile kaydedilir. Versiyonlar birbirinden bağımsız fiziksel dosyalardır.</li>
+</ul>
+
+<h3 class="sub">9.2 API Uç Noktaları</h3>
+
+<h4 class="sub2">Auth Endpoint'leri</h4>
+<table class="data no-break">
+  <thead><tr><th style="width:14mm">Metot</th><th style="width:58mm">URL</th><th>Açıklama</th><th style="width:20mm">Auth</th></tr></thead>
+  <tbody>
+    <tr><td><span class="post">POST</span></td><td><code>/api/auth/register</code></td><td>Yeni kullanıcı kaydı. Body: <code>{fullName, email, password}</code></td><td>Hayır</td></tr>
+    <tr><td><span class="post">POST</span></td><td><code>/api/auth/login</code></td><td>Giriş. Body: <code>{email, password}</code>. Response: <code>{token, user}</code></td><td>Hayır</td></tr>
+    <tr><td><span class="get">GET</span></td><td><code>/api/auth/me</code></td><td>Mevcut kullanıcı bilgilerini döner</td><td>JWT</td></tr>
+    <tr><td><span class="post">POST</span></td><td><code>/api/auth/forgot-password</code></td><td>Şifre sıfırlama token'ı oluşturur</td><td>Hayır</td></tr>
+    <tr><td><span class="post">POST</span></td><td><code>/api/auth/reset-password</code></td><td>Token + yeni şifre ile şifre günceller</td><td>Hayır</td></tr>
+  </tbody>
+</table>
+
+<h4 class="sub2">Klasör Endpoint'leri</h4>
+<table class="data no-break">
+  <thead><tr><th style="width:14mm">Metot</th><th style="width:58mm">URL</th><th>Açıklama</th><th style="width:20mm">Auth</th></tr></thead>
+  <tbody>
+    <tr><td><span class="get">GET</span></td><td><code>/api/folders?parentId=</code></td><td>Belirtilen üst klasördeki klasörleri listeler (null = kök)</td><td>JWT</td></tr>
+    <tr><td><span class="post">POST</span></td><td><code>/api/folders</code></td><td>Yeni klasör oluşturur. Body: <code>{name, parentFolderId?}</code></td><td>JWT</td></tr>
+    <tr><td><span class="delete">DELETE</span></td><td><code>/api/folders/{id}</code></td><td>Klasörü soft-delete ile siler</td><td>JWT</td></tr>
+  </tbody>
+</table>
+
+<h4 class="sub2">Dosya Endpoint'leri</h4>
+<table class="data no-break">
+  <thead><tr><th style="width:14mm">Metot</th><th style="width:58mm">URL</th><th>Açıklama</th><th style="width:20mm">Auth</th></tr></thead>
+  <tbody>
+    <tr><td><span class="get">GET</span></td><td><code>/api/files?folderId=&amp;search=</code></td><td>Dosya listesi (klasör + arama filtresiyle)</td><td>JWT</td></tr>
+    <tr><td><span class="post">POST</span></td><td><code>/api/files</code></td><td>Dosya yükler. Form-data: <code>file, folderId?</code></td><td>JWT</td></tr>
+    <tr><td><span class="get">GET</span></td><td><code>/api/files/{id}/download</code></td><td>Dosyayı indirir (blob response)</td><td>JWT</td></tr>
+    <tr><td><span class="get">GET</span></td><td><code>/api/files/{id}/versions</code></td><td>Dosyanın tüm versiyonlarını listeler</td><td>JWT</td></tr>
+    <tr><td><span class="delete">DELETE</span></td><td><code>/api/files/{id}</code></td><td>Dosyayı soft-delete ile siler</td><td>JWT</td></tr>
+  </tbody>
+</table>
+
+<h4 class="sub2">Paylaşım Endpoint'leri</h4>
+<table class="data no-break">
+  <thead><tr><th style="width:14mm">Metot</th><th style="width:58mm">URL</th><th>Açıklama</th><th style="width:20mm">Auth</th></tr></thead>
+  <tbody>
+    <tr><td><span class="post">POST</span></td><td><code>/api/share</code></td><td>Paylaşım linki oluşturur. Body: <code>{fileItemId, allowDownload}</code></td><td>JWT</td></tr>
+    <tr><td><span class="get">GET</span></td><td><code>/api/share/{token}/download</code></td><td>Token ile anonim dosya indirir</td><td>Hayır</td></tr>
+  </tbody>
+</table>
+
+<h4 class="sub2">Admin Endpoint'leri</h4>
+<table class="data no-break">
+  <thead><tr><th style="width:14mm">Metot</th><th style="width:58mm">URL</th><th>Açıklama</th><th style="width:20mm">Auth</th></tr></thead>
+  <tbody>
+    <tr><td><span class="get">GET</span></td><td><code>/api/admin/users</code></td><td>Tüm kullanıcıları listeler</td><td>Admin</td></tr>
+    <tr><td><span class="put">PUT</span></td><td><code>/api/admin/users/{id}/quota</code></td><td>Kota günceller. Body: <code>{quota}</code></td><td>Admin</td></tr>
+    <tr><td><span class="put">PUT</span></td><td><code>/api/admin/users/{id}/role</code></td><td>Rol günceller. Body: <code>{role}</code></td><td>Admin</td></tr>
+    <tr><td><span class="put">PUT</span></td><td><code>/api/admin/users/{id}/status</code></td><td>Hesap aktiflik durumu değiştirir</td><td>Admin</td></tr>
+    <tr><td><span class="get">GET</span></td><td><code>/api/admin/stats</code></td><td>Sistem istatistiklerini döner</td><td>Admin</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">9.3 Kullanılan Teknoloji Yığını</h3>
+<table class="data no-break">
+  <thead><tr><th>Katman</th><th>Teknoloji</th><th>Versiyon</th><th>Amaç</th></tr></thead>
+  <tbody>
+    <tr><td>Backend Runtime</td><td>ASP.NET Core Web API</td><td>.NET 10</td><td>RESTful API sunucusu</td></tr>
+    <tr><td>ORM</td><td>Entity Framework Core</td><td>9.x</td><td>Veritabanı erişim katmanı</td></tr>
+    <tr><td>Veritabanı</td><td>PostgreSQL</td><td>17</td><td>İlişkisel veri depolama</td></tr>
+    <tr><td>EF Provider</td><td>Npgsql.EntityFrameworkCore.PostgreSQL</td><td>9.x</td><td>PostgreSQL–EF Core köprüsü</td></tr>
+    <tr><td>Kimlik Doğrulama</td><td>Microsoft.AspNetCore.Authentication.JwtBearer</td><td>10.x</td><td>JWT Bearer doğrulama</td></tr>
+    <tr><td>Şifre Hashleme</td><td>BCrypt.Net-Next</td><td>4.x</td><td>Güvenli şifre saklama (cost=12)</td></tr>
+    <tr><td>API Dökümantasyonu</td><td>Swagger / Swashbuckle</td><td>—</td><td>Otomatik API belgesi</td></tr>
+    <tr><td>Frontend Framework</td><td>React</td><td>18</td><td>SPA kullanıcı arayüzü</td></tr>
+    <tr><td>Frontend Build</td><td>Vite</td><td>8.x</td><td>Hızlı geliştirme sunucusu</td></tr>
+    <tr><td>CSS Framework</td><td>Tailwind CSS</td><td>3.x</td><td>Utility-first stil sistemi</td></tr>
+    <tr><td>HTTP İstemcisi</td><td>Axios</td><td>1.x</td><td>API istekleri + interceptor</td></tr>
+    <tr><td>Yönlendirme</td><td>React Router DOM</td><td>6.x</td><td>SPA sayfa geçişleri</td></tr>
+  </tbody>
+</table>
+<div class="page-break"></div>
+
+<!-- ══════════════════════ 10 – KULLANIM KILAVUZU ══════════════════════ -->
+<h2 class="section">10 – Kullanım Kılavuzu</h2>
+
+<h3 class="sub">10.1 Kurulum ve Başlatma</h3>
+
+<h4 class="sub2">Önkoşullar</h4>
+<ul>
+  <li>.NET 10 SDK (dotnet.microsoft.com adresinden indirilebilir)</li>
+  <li>PostgreSQL 15+ (varsayılan port 5432)</li>
+  <li>Node.js 18+ ve npm</li>
+</ul>
+
+<h4 class="sub2">Backend Kurulumu</h4>
+<ol>
+  <li>Proje kök dizinine gidin: <code>cd backend/CloudFile.Api</code></li>
+  <li><code>appsettings.json</code> dosyasında bağlantı dizesini düzenleyin:
+    <br><code>"DefaultConnection": "Host=localhost;Port=5432;Database=cloud_file_db;Username=postgres;Password=SIFRE"</code>
+  </li>
+  <li>Veritabanı migration'larını uygulayın: <code>dotnet ef database update</code></li>
+  <li>API sunucusunu başlatın: <code>dotnet run</code></li>
+  <li>API: <b>http://localhost:5200</b> &nbsp;|&nbsp; Swagger: <b>http://localhost:5200/swagger</b></li>
+</ol>
+
+<h4 class="sub2">Frontend Kurulumu</h4>
+<ol>
+  <li>Frontend dizinine gidin: <code>cd frontend/cloud-file-ui</code></li>
+  <li>Bağımlılıkları yükleyin: <code>npm install</code></li>
+  <li>Geliştirme sunucusunu başlatın: <code>npm run dev</code></li>
+  <li>Uygulama: <b>http://localhost:3000</b></li>
+</ol>
+
+<h3 class="sub">10.2 Kullanıcı Arayüzü Akışı</h3>
+
+<h4 class="sub2">Kayıt ve Giriş</h4>
+<ol>
+  <li>Tarayıcıda <code>http://localhost:3000</code> adresine gidin.</li>
+  <li>"Kayıt Ol" linkine tıklayarak hesap oluşturun (ad, e-posta, şifre).</li>
+  <li>Giriş sayfasında e-posta ve şifrenizi girerek sisteme erişin.</li>
+  <li>Admin hesabıyla giriş yapıldığında /admin paneli açılır.</li>
+</ol>
+
+<h4 class="sub2">Dashboard – Dosya ve Klasör Yönetimi</h4>
+<ol>
+  <li><b>Klasör Oluşturma:</b> "📁 Klasör" düğmesine basın, ad girin, Enter'a basın veya "Oluştur"a tıklayın.</li>
+  <li><b>Klasöre Girme:</b> Klasör ikonuna çift tıklayın veya "→" düğmesine basın. Üst kısımdaki breadcrumb ile geri dönebilirsiniz.</li>
+  <li><b>Dosya Yükleme:</b> "⬆️ Yükle" düğmesine tıklayın; açılan modal'da dosya seçin ve "Yükle"ye basın. Aynı isimde dosya mevcutsa yeni versiyon oluşturulur.</li>
+  <li><b>Dosya Arama:</b> Üst kısımdaki arama kutusuna dosya adını yazmaya başlayın; liste anlık filtrelenir.</li>
+  <li><b>Dosya İndirme:</b> Dosya satırının üzerine geldiğinizde görünen "⬇️" düğmesine tıklayın.</li>
+  <li><b>Paylaşım Linki:</b> "🔗" düğmesine tıklayın; link otomatik olarak panoya kopyalanır. Bu link, hesap sahibi olmayan kişilerin de dosyayı indirmesine olanak tanır.</li>
+  <li><b>Dosya Silme:</b> "🗑️" düğmesine tıklayın ve onay verin. Dosya soft-delete ile işaretlenir (fiziksel dosya silinmez).</li>
+</ol>
+
+<h4 class="sub2">Şifre Sıfırlama</h4>
+<ol>
+  <li>Giriş sayfasında "Şifremi unuttum" linkine tıklayın.</li>
+  <li>E-posta adresinizi girin ve "Gönder"e basın.</li>
+  <li>Ekranda görünen reset token'ını kopyalayın (gerçek sistemde bu e-posta ile gelir).</li>
+  <li>"Şifreyi sıfırlamak için tıkla" linkine basın veya <code>/reset-password?token=TOKEN</code> adresine gidin.</li>
+  <li>Yeni şifrenizi girin ve "Şifremi Sıfırla"ya basın.</li>
+  <li>2 saniye sonra otomatik olarak giriş sayfasına yönlendirilirsiniz.</li>
+</ol>
+
+<h4 class="sub2">Admin Paneli</h4>
+<ol>
+  <li>Admin rolüyle giriş yaptığınızda otomatik olarak <code>/admin</code> sayfasına yönlendirilirsiniz.</li>
+  <li>Kullanıcı listesinden herhangi bir kullanıcının kotasını (GB cinsinden) veya rolünü değiştirebilirsiniz.</li>
+  <li>Üst kısımdaki istatistik kartlarında toplam kullanıcı sayısı, toplam dosya sayısı ve toplam kullanılan depolama alanı görüntülenir.</li>
+  <li>Hesap aktiflik durumunu değiştirerek kullanıcıları geçici olarak devre dışı bırakabilirsiniz.</li>
+</ol>
+
+<h3 class="sub">10.3 Bilinen Kısıtlamalar ve Notlar</h3>
+<ul>
+  <li>Şifre sıfırlama token'ı demo amaçlı API response'da dönmektedir; üretim ortamında e-posta servisi (SMTP / SendGrid) entegre edilmelidir.</li>
+  <li>Tek dosya yükleme limiti 100 MB olarak ayarlanmıştır (<code>appsettings.json</code> → <code>MaxFileSizeBytes</code>).</li>
+  <li>Dosyalar soft-delete ile silinir; fiziksel dosya disk üzerinde kalmaya devam eder. Disk temizliği için ayrı bir background job eklenmelidir.</li>
+  <li>Mevcut depolama backend'i sunucu diski kullanmaktadır; yüksek ölçekli kullanım için MinIO veya AWS S3 entegrasyonu önerilir.</li>
+  <li>JWT secret key üretim ortamında güvenli bir key-vault veya environment variable aracılığıyla yönetilmelidir.</li>
+</ul>
+
+<hr style="margin-top:12mm; border:none; border-top:1px solid #e2e8f0;">
+<p style="text-align:center; color:#94a3b8; font-size:9pt; margin-top:3mm;">
+  BMB306 – Yazılım Mühendisliği | Konu #18 | Burak Koç | 2025–2026 Bahar
+</p>
+
+</body>
+</html>
