@@ -123,4 +123,4 @@ bulut_tabanli_dosya_paylasma/
 
 ---
 
-*Burak Koç — Bilgisayar Mühendisliği*
+*Burak Koç*
