@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿# Bulut Tabanlı Dosya Paylaşım ve İş Birliği Sistemi
 
 **BMB306 - Yazılım Mühendisliği | Konu #18**  
@@ -95,7 +94,8 @@ bulut_tabanli_dosya_paylasma/
 │           ├── components/
 │           ├── context/
 │           └── api/
-└── uploads/        ← yüklenen dosyalar burada saklanır
+├── screenshots/      ← ekran görüntüleri
+└── uploads/          ← yüklenen dosyalar burada saklanır
 ```
 
 ## Notlar
@@ -106,11 +106,21 @@ bulut_tabanli_dosya_paylasma/
 
 ## Ekran Görüntüleri
 
-> Login, Dashboard, Admin Panel ve Şifre Sıfırlama sayfaları projeye dahildir.
+### Giriş Sayfası
+![Giriş](screenshots/giris.png)
+
+### Kayıt Sayfası
+![Kayıt](screenshots/kayit.png)
+
+### Dosya Yükleme
+![Yükleme](screenshots/yukleme.png)
+
+### Dosya İndirme
+![İndirme](screenshots/indirme.png)
+
+### Şifre Sıfırlama
+![Şifre Sıfırlama](screenshots/parola_sifirlama.png)
 
 ---
 
 *Burak Koç — Bilgisayar Mühendisliği*
-=======
-# Bulut-Tabanli-Dosya-Paylasim-ve-Is-Birligi-Sistemi
->>>>>>> bdc03ccb6249e38f7db6b5fd1d92fa0c637eea7c
