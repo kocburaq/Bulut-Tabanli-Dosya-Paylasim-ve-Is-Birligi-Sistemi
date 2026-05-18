@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# Bulut Tabanlı Dosya Paylaşım ve İş Birliği Sistemi
 
 **BMB306 - Yazılım Mühendisliği | Konu #18**  
@@ -110,3 +111,6 @@ bulut_tabanli_dosya_paylasma/
 ---
 
 *Burak Koç — Bilgisayar Mühendisliği*
+=======
+# Bulut-Tabanli-Dosya-Paylasim-ve-Is-Birligi-Sistemi
+>>>>>>> bdc03ccb6249e38f7db6b5fd1d92fa0c637eea7c
