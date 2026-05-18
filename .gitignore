@@ -1,0 +1,36 @@
+﻿# ========================
+# .NET / ASP.NET Core
+# ========================
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.log
+appsettings.Development.json
+
+# ========================
+# Node.js / Frontend
+# ========================
+node_modules/
+dist/
+.env
+.env.local
+
+# ========================
+# Yüklenen dosyalar (uploads)
+# ========================
+uploads/
+
+# ========================
+# Claude Code (IDE verileri)
+# ========================
+.claude/
+
+# ========================
+# Genel
+# ========================
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
